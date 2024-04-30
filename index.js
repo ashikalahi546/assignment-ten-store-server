@@ -113,11 +113,19 @@ async function run() {
     // await client.close();
   }
 }
+
 run().catch(console.dir);
 
 
 
 
+
+app.get('/abc', async(req,res)=>{
+  res.send([{
+    'name': 'name',
+  }
+  ])
+})
 
 app.get('/', (req, res) => {
     res.send('assigment ten is running')
