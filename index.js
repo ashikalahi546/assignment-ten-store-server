@@ -50,6 +50,13 @@ async function run() {
             res.send(service)
     })
 
+    app.get('/abc', async(req,res)=>{
+      res.send([{
+        'name': 'name',
+      }
+      ])
+    })
+
     //data show
     app.post('/travelers',async(req,res)=>{
         const newTravelers = req.body;
