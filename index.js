@@ -10,11 +10,9 @@ app.use(cors())
 app.use(express.json())
 
 
-// travelers20
 
 
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.lbnjpl6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,9 +34,20 @@ async function run() {
 
     // data
     app.get('/travelers',async(req,res)=>{
-        const cursor = travelersCollecttion.find();
+      let reqBody = req.body
+        const cursor = travelersCollecttion.find(reqBody);
         const result = await cursor.toArray();
         res.send(result)
+    })
+
+
+
+/// single id jonno
+    app.get('/travelers/:id', async(req,res)=>{
+      const id = req.params.id
+       const cursor = { _id:new ObjectId(id) }
+         const service = await travelersCollecttion.findOne(cursor)
+            res.send(service)
     })
 
     //data show
@@ -48,6 +57,45 @@ async function run() {
         const result = await travelersCollecttion.insertOne(newTravelers);
         res.send(result)
     })
+
+
+    // delete
+    app.delete('/travelars/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+    const result = await travelersCollecttion.deleteOne(query)
+    res.send(result)
+    })
+
+
+    //all update
+
+    app.put('/travelers/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId (id)}
+      const updateTravelars = req.body;
+      const travelar = {
+        $set:{
+          name:updateTravelars.name,
+          email:updateTravelars.email,
+          country:updateTravelars.country,
+          sport:updateTravelars.sport,
+          seasonality:updateTravelars.seasonality,
+          location:updateTravelars.location,
+          average:updateTravelars.average,
+          time:updateTravelars.time,
+          total:updateTravelars.total,
+          image:updateTravelars.image,
+          short:updateTravelars.short,
+        }
+      }
+
+
+      const result = await travelersCollecttion.updateOne(filter,travelar)
+        res.send(result)
+    })
+    
+
 
 
     // Send a ping to confirm a successful connection
